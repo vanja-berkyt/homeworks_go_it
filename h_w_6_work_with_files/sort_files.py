@@ -3,6 +3,8 @@ files_in_dir = []
 text = 'sjdhvalebkvklbv'
 def minys(a,b):
     return a - b
+def mul(a,b):
+    return a * b
 
 def sort_files(a,b):
     return a + b
