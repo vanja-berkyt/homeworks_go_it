@@ -1,5 +1,6 @@
 
 from pathlib import PurePath
+from normalised_pass import rename
 
 image = []
 video = []
@@ -12,7 +13,13 @@ list_of_unknown_suffixes = set()
 dict_of_files = {}
 
 def sort_files(list_of_pathes:list):
+    ''' rename normalized files name and return dict of "type file": [files list full path]
+
+    :param list_of_pathes: list of all pathes for normalize
+    :return: dict  {types : [files]}
+    '''
     for file in list_of_pathes:
+        file = rename(file)
         sufix = PurePath(file).suffix
         if sufix in ('.jpeg', '.png', '.jpg', '.svg'):
             image.append(file)
@@ -33,9 +40,10 @@ def sort_files(list_of_pathes:list):
             else_file.append(file)
             list_of_unknown_suffixes.add(sufix)
     dict_of_files.update({'image': image})
-    dict_of_files.update( {'video': video})
+    dict_of_files.update({'video': video})
     dict_of_files.update({'music': music})
     dict_of_files.update({'archive': archive})
     dict_of_files.update({'doc': doc})
     dict_of_files.update({'else': else_file})
+
     return dict_of_files

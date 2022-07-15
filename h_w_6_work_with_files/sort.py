@@ -1,71 +1,68 @@
 import sys
 import os
 import shutil
-import pathlib
+
 from all_files import files_in_dir
-from sorted_files import sort_files
-from normalised_pass import normalize
-from sorted_files import dict_of_files
+from sorted_files import sort_files, dict_of_files, list_of_known_suffixes, list_of_unknown_suffixes
+from remove_dirs import rem_dir
+
+def name_from_path(pas):
+    ''' take path to file and return file name
+
+    :param pas: path to file (/home/text.txt)
+    :return: file mame       (text)
+    '''
+    split_path = os.path.split(pas)
+    split = os.path.splitext(split_path[1])
+    file_name = split[0]
+    return file_name
+
+def unpack(pas):
+    '''
+    unpack archives into new directory, named like archive
+    :param pas: path to archive
+    :return: None
+    '''
+    arch_name = name_from_path(pas)
+    os.makedirs(arch_name,exist_ok=True)
+    dest = MAIN_PATH +"/" + "archive"+ "/" + arch_name
+    try:
+        shutil.unpack_archive(pas, dest)
+        os.remove(pas)
+    except OSError as e:
+        print(e.strerror)
+        shutil.move(path, MAIN_PATH + '/' + 'else_file')
+
 
 input_comand = sys.argv
-MAIN_PATH = input_comand[1]             # main path where will be created dict with sorted files
-all_list = files_in_dir(MAIN_PATH)               #sorted all dict and files
-all_files = all_list[0]                          #list of ALL files
-all_files_pathes = all_list[1]                   #list of PASES for all files
-sort_files(all_files_pathes)
+MAIN_PATH = input_comand[1]                 # main path where will be created dict with sorted files
 
+sort = files_in_dir(MAIN_PATH)              #sorted all dict and files
+all_files = sort[0]
+all_files_pathes = sort[1]
+all_sub_dir = sort[2]
+
+sort_files(all_files_pathes)
 for key, value in dict_of_files.items():
     os.makedirs(MAIN_PATH + '/' + key, exist_ok=True)
-    for path in value:
-        shutil.move(path, MAIN_PATH + '/' + key)
-        try:
-            path = pathlib.Path(path)
-            path.rmdir()
-        except ValueError:
-            print('dir is not empty')
-        finally:
-            continue
+    if key == 'archive':
+        for path in value:
+            unpack(path)
+    else:
+        for path in value:
+            try:
+                shutil.move(path, MAIN_PATH + '/' + key)
+            except OSError as e:
+                print('file alredy copeid')
+            finally:
+                continue
+rem_dir(all_sub_dir)
+
+print(f'Files found and sorted {all_files} ')
+print(f'list of known suffixes: {list_of_known_suffixes}')
+print(f'list of UNknown suffixes: {list_of_unknown_suffixes}')
 
 
-    print(key, value)
-
-
-
-
-
-# def normalize(file_adress: str):
-#     cyrylic_symbols_little = "абвгдеєжзийклмнопрстуфхцчшщьєюяії"
-#     cyrylic_symbols_big = "АБВГДЕЄЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЄЮЯІЇ"
-#     translation = (
-#     "a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
-#     "f", "h", "ts", "ch", "sh", "sch", "", "je", "yu", "ya", "i", "ji")
-#     new_file_name = []
-#     for symbol in file_adress:
-#         if symbol.isalpha() or symbol.isdigit():
-#             if symbol in cyrylic_symbols_little:
-#                 letter_index = cyrylic_symbols_little.find(symbol)
-#                 new_file_name.append(translation[letter_index])
-#             elif symbol in cyrylic_symbols_big:
-#                 letter_index = cyrylic_symbols_big.find(symbol)
-#                 new_file_name.append(translation[letter_index].upper())
-#             else:
-#                 new_file_name.append(symbol)
-#         else:
-#             new_file_name.append('_')
-#     new_file_name_string = ''.join(new_file_name)
-#     print(new_file_name_string)
-#     return new_file_name_string
-
-def rename(adress: str):
-    adress_splited = adress.split('/')
-    full_name = adress_splited.pop()
-    name = full_name.split('.', 1)
-    name_normalized = normalize(name[0])
-    file_name_new = name_normalized + '.' + name[1]
-    adress_splited.append(file_name_new)
-    new_name = '/'.join(adress_splited)
-    os.rename(adress, new_name)
-    return new_name
 
 
 
