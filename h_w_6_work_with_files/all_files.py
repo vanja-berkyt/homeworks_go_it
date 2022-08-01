@@ -7,7 +7,7 @@ list_all_dir = []
 def files_in_dir(dir_path: str):
     '''
     recursively find all files in this and sub directories
-    :param dir_path: path to dir in which we want to see all files
+    :param dir_path: path to dir in which we want to find all files
     :return: tuple of lists : list of all files[0] , list of all pathes for all files[1], pathes
     for all directors inside[2]
     '''
