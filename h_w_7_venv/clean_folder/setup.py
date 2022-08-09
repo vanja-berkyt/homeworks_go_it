@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(name='clean_folder',
-      version='1.0.1',
+      version='1.0.2',
       description='my first package',
       author='Ivan Drago',
       author_email='i.dragomeretskyy@dmail.com',
