@@ -1,5 +1,5 @@
 from hendlers import handlers, unknown_handler
-from parser import parse_user_input
+# from parser import parse_user_input
 
 
 def input_handler(func):
