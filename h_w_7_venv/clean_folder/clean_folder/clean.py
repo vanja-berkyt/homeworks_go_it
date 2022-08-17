@@ -33,31 +33,34 @@ def unpack(pas):
         print(e.strerror)
         shutil.move(path, MAIN_PATH + '/' + 'else_file')
 
+def clean_func():
+    input_comand = sys.argv
+    MAIN_PATH = input_comand[1]                 # main path where will be created dict with sorted files
 
-input_comand = sys.argv
-MAIN_PATH = input_comand[1]                 # main path where will be created dict with sorted files
+    sort = files_in_dir(MAIN_PATH)              #sorted all dict and files
+    all_files = sort[0]
+    all_files_pathes = sort[1]
+    all_sub_dir = sort[2]
 
-sort = files_in_dir(MAIN_PATH)              #sorted all dict and files
-all_files = sort[0]
-all_files_pathes = sort[1]
-all_sub_dir = sort[2]
+    sort_files(all_files_pathes)
+    for key, value in dict_of_files.items():
+        os.makedirs(MAIN_PATH + '/' + key, exist_ok=True)
+        if key == 'archive':
+            for path in value:
+                unpack(path)
+        else:
+            for path in value:
+                try:
+                    shutil.move(path, MAIN_PATH + '/' + key)
+                except OSError as e:
+                    print('file alredy copeid')
+                finally:
+                    continue
+    rem_dir(all_sub_dir)
 
-sort_files(all_files_pathes)
-for key, value in dict_of_files.items():
-    os.makedirs(MAIN_PATH + '/' + key, exist_ok=True)
-    if key == 'archive':
-        for path in value:
-            unpack(path)
-    else:
-        for path in value:
-            try:
-                shutil.move(path, MAIN_PATH + '/' + key)
-            except OSError as e:
-                print('file alredy copeid')
-            finally:
-                continue
-rem_dir(all_sub_dir)
+    print(f'Files found and sorted {all_files} ')
+    print(f'list of known suffixes: {list_of_known_suffixes}')
+    print(f'list of UNknown suffixes: {list_of_unknown_suffixes}')
 
-print(f'Files found and sorted {all_files} ')
-print(f'list of known suffixes: {list_of_known_suffixes}')
-print(f'list of UNknown suffixes: {list_of_unknown_suffixes}')
+if __name__ == "__main__":
+    clean_func()
