@@ -7,7 +7,7 @@ def hello(*args):
 
 def add(name:str, phone_number:str):
     if book.get(name) is None:
-        book[name] : phone_number
+        book.update({name : phone_number})
         return "Number was added"
     else:
         raise ValueError("number exists")
@@ -28,7 +28,7 @@ def phone(name):
 
 
 def show_all(*args):
-    contacts = "\n".join(f'{name}: {number}' for (name,number) in book.items())
+    contacts = "\n".join(f'{name}: {number}' for (name, number) in book.items())
     form_contacts = "number does not exists" if contacts == "" else contacts
     return form_contacts
 
