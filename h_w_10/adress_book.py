@@ -40,7 +40,7 @@ class AddressBook(UserDict):
 class Record:
     def __init__(self, name: Name, phone: Phone = None):
         self.name: Name = name
-        self.phones: list[Phone] = [phone] if phone is not None else []
+        self.phones = [phone] if phone is not None else []
 
     # def __repr__(self):
     #     return f"{self.name.value}: {' '.join(phone.value for phone in self.phones)}"
