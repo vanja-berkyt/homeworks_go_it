@@ -28,6 +28,7 @@ class AddressBook(UserDict):
         self.data[record.name.value] = record
 
     def find_contact(self, attribute, value):
+        pass
 
 
     def change_contact(self, name, old_number, new_number):
