@@ -1,43 +1,43 @@
 import datetime
 import re
 from collections import UserDict
-from typing import Union
-
-
-
 
 
 class Field:
     def __init__(self, value: str):
-        self.__value = value
+        self._value = None
+        self.value = value
+
     def __repr__(self):
-        return self.__value
+        return self._value
 
     @property
     def value(self) -> int:
-        return self.__value
+        return self._value
 
-
-    @classmethod
-    def create_field(cls, value):
-        field = cls(value=value)
-        return str(field)
+    @value.setter
+    def value(self, value):
+        self._value = value
 
 
 class Name(Field):
     @property
     def value(self) -> datetime.datetime:
-        return self.__value
+        return self._value
 
     @Field.value.setter
     def value(self, value):
-        self.__value = value
+        self._value = value
 
 
 class Phone(Field):
+    # def __init__(self, value):
+    #     super().__init__(value)
+    #     self.value = self._value
+
     @property
-    def value(self) ->datetime.datetime:
-        return self.__value
+    def value(self) ->str:
+        return self._value
 
     @Field.value.setter
     def value(self, value):
@@ -45,19 +45,21 @@ class Phone(Field):
         for i in new_value:
             new_value = i
             if len(value >= 9) and len(new_value > 0):
-                self.__value = new_value
+                self._value = new_value
             else:
-                self.__value = None
+                self._value = None
 
 class Birthday(Field):
     @property
-    def value(self) -> datetime.datetime:
-        return self.__value
+    def value(self) -> datetime.datetime.date:
+        return self._value
 
     @value.setter
     def value(self, value):
-        self.__value = datetime.datetime.strptime(value, "%d-%m-%y")   # додати перевірку
+        self._value = datetime.datetime.strptime(value, "%d-%m-%y")   # додати перевірку
 
+    def __repr__(self):
+        return datetime.datetime.strftime(self._value, "%d-%m-%y")
 
 class AddressBook(UserDict):
 
@@ -94,20 +96,19 @@ class AddressBook(UserDict):
         return self
 
     def __next__(self):
-        records = self.data.values()
+        records = list(self.data.items())
         start_index = self.page * self.__items_per_page
         end_index = (self.page + 1) * self.__items_per_page
+        self.page += 1
+
         if len(records) > len(end_index):
-            return records[start_index : end_index]
+            to_retorn = records[start_index : end_index]
         else:
             if len(records) < len(start_index):
-                return records[start_index : len(records)]
+                to_retorn = records[start_index : len(records)]
             else:
-                return records[:-1]
-
-
-
-
+                to_retorn = records[:-1]
+        return [{record[1] : record[0]} for record in to_retorn]
 
 
 def _now():
@@ -127,15 +128,12 @@ class Record:
     def days_to_birthday(self):
         now = _now()
         if self.birthday is not None:
-            birthday: datetime.datetime = self.birthday.value.date()
+            birthday: datetime.datetime.date = self.birthday.value.date()
             next_birthday = _create_date(year=now.year, month=birthday.month,day=birthday.day)
             if birthday < next_birthday:
                 next_birthday = _create_date(year=birthday.year+1, month=birthday.month,day=birthday.day)
             return (next_birthday - birthday).day
         return None
-
-    # def __repr__(self):
-    #     return f"{self.name.value}: {' '.join(phone.value for phone in self.phones)}"
 
     def add_phone(self, phone_number: Phone):
         self.phones.append(phone_number)
